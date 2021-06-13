@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LichessAdvancedStats", "LichessAdvancedStats\LichessAdvancedStats.csproj", "{B1EF428F-1A65-4FEB-8154-A7F9BC4ECC21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LichessAdvancedStats", "LichessAdvancedStats\LichessAdvancedStats.csproj", "{B1EF428F-1A65-4FEB-8154-A7F9BC4ECC21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{C297B5DF-EA2D-448D-B896-1982F4ECC78A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B1EF428F-1A65-4FEB-8154-A7F9BC4ECC21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1EF428F-1A65-4FEB-8154-A7F9BC4ECC21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1EF428F-1A65-4FEB-8154-A7F9BC4ECC21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C297B5DF-EA2D-448D-B896-1982F4ECC78A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C297B5DF-EA2D-448D-B896-1982F4ECC78A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C297B5DF-EA2D-448D-B896-1982F4ECC78A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C297B5DF-EA2D-448D-B896-1982F4ECC78A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
