@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace LichessAdvancedStats
+namespace LichessAdvancedStats.Domain
 {
     public class LichessApiWorker
     {
