@@ -18,7 +18,8 @@ namespace Tests.PgnParser
         [Test]
         public void OneAttributeParsed()
         {
-            var pgn = "[Event \"Rated Blitz game\"]";
+            var pgn = "[Event \"Rated Blitz game\"]" +
+                "\n1. e4 e5 2. f4 exf4";
 
             var games = parser.Parse(pgn);
 
@@ -29,7 +30,9 @@ namespace Tests.PgnParser
         [Test]
         public void SeveralAttributesParsed()
         {
-            var pgn = "[White \"Skvorec\"]\n[Black \"MarsellusW\"]";
+            var pgn = "[White \"Skvorec\"]" +
+                "\n[Black \"MarsellusW\"]" +
+                "\n1. e4 e5 2. f4 exf4";
 
             var games = parser.Parse(pgn);
 
@@ -41,7 +44,9 @@ namespace Tests.PgnParser
         [Test]
         public void MovesParsed()
         {
-            var pgn = "1. e4 e5 2. f4 exf4";
+            var pgn = "[White \"Skvorec\"]" +
+                "\n[Black \"MarsellusW\"]" +
+                "\n1. e4 e5 2. f4 exf4";
 
             var games = parser.Parse(pgn);
 
