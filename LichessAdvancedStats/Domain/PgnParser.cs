@@ -10,7 +10,28 @@ namespace LichessAdvancedStats.Domain
     {
         public List<Game> Parse(string pgn)
         {
-            throw new NotImplementedException();
+            var games = new List<Game>();
+
+            var game = new Game();
+
+            var attributes = pgn.Split('[', ']');
+
+            foreach (var attribute in attributes)
+            {
+                var preparedString = attribute.Trim();
+
+                var splited = preparedString.Split('"');
+
+                if (splited.Length > 1)
+                {
+                    game.Attributes.Add(splited[0].Trim(),
+                                        splited[1].Trim());
+                }
+            }
+
+            games.Add(game);
+
+            return games;    
         }
     }
 }
