@@ -22,12 +22,14 @@ namespace LichessAdvancedStats.Domain
             {
                 gameStartIndex = gameEndIndex + 1;
                 movesIndex = pgn.IndexOf("1.", gameStartIndex);
+
                 gameEndIndex = pgn.IndexOf('[', movesIndex) - 1;
                 gameEndIndex = gameEndIndex > 0
                     ? gameEndIndex
                     : pgnEndIndex;
 
-                var game = ParseGame(pgn, gameStartIndex, movesIndex, gameEndIndex);
+                var gameString = pgn.Substring(gameStartIndex, gameEndIndex - gameStartIndex + 1);
+                var game = ParseGame(gameString);
                 games.Add(game);
             }
             while (gameEndIndex < pgnEndIndex);
@@ -36,23 +38,24 @@ namespace LichessAdvancedStats.Domain
             return games;
         }
 
-        private Game ParseGame(string pgn, int gameStartIndex, int movesIndex, int gameEndIndex)
+        private Game ParseGame(string gameString)
         {
-            var game = new Game();
-            game.Attributes = ParseAttributes(pgn, gameStartIndex, movesIndex);
-            game.Moves = ParseMoves(pgn, movesIndex, gameEndIndex);
+            var movesIndex = gameString.IndexOf("1.");
+            var game = new Game
+            {
+                Attributes = ParseAttributes(gameString.Substring(0, movesIndex - 1)),
+                Moves = ParseMoves(gameString.Substring(movesIndex))
+            };
             return game;
         }
 
-        private Dictionary<string, string> ParseAttributes(string pgn, int gameStartIndex, int movesIndex)
+        private Dictionary<string, string> ParseAttributes(string attributes)
         {
-            var attributes = pgn.Substring(gameStartIndex, movesIndex - gameStartIndex).Split('[', ']');
+            var attributesSplited = attributes.Split('[', ']');
             var attributesDictionary = new Dictionary<string, string>();
-            foreach (var attribute in attributes)
+            foreach (var attribute in attributesSplited)
             {
-                var preparedString = attribute.Trim();
-
-                var splited = preparedString.Split('"');
+                var splited = attribute.Trim().Split('"');
 
                 if (splited.Length > 1)
                 {
@@ -64,25 +67,27 @@ namespace LichessAdvancedStats.Domain
             return attributesDictionary;
         }
 
-        private List<Move> ParseMoves(string pgn, int movesIndex, int gameEndIndex)
+        private List<Move> ParseMoves(string movesString)
         {
-            var moves = new List<Move>();
-
-            var movesString = pgn.Substring(movesIndex, gameEndIndex - movesIndex + 1).Trim();
-            var movesSplited = movesString.Split(" ");
+            var movesSplited = movesString.Trim().Split(" ");
+            var moves = new List<Move>();   
+            
             for (int i = 0; i < movesSplited.Length; i++)
             {
                 if (i % 3 == 0)
                 {
                     moves.Add(new Move());
+                    continue;
                 }
                 if (i % 3 == 1)
                 {
                     moves.Last().WhiteMove = movesSplited[i];
+                    continue;
                 }
                 if (i % 3 == 2)
                 {
                     moves.Last().BlackMove = movesSplited[i];
+                    continue;
                 }
             }
 
