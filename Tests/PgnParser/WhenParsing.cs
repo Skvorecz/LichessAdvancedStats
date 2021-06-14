@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentAssertions;
 using NUnit.Framework;
-using FluentAssertions;
-using LichessAdvancedStats.Domain;
-using LichessAdvancedStats.Model;
 
 namespace Tests.PgnParser
 {
     [TestFixture]
-    class WhenParsing
+    public class WhenParsing
     {
-        LichessAdvancedStats.Domain.PgnParser parser = new LichessAdvancedStats.Domain.PgnParser();
+        private LichessAdvancedStats.Domain.PgnParser parser = new LichessAdvancedStats.Domain.PgnParser();
 
         [Test]
         public void OneAttributeParsed()
@@ -54,6 +47,12 @@ namespace Tests.PgnParser
             games[0].Moves[0].BlackMove.Should().Be("e5");
             games[0].Moves[1].WhiteMove.Should().Be("f4");
             games[0].Moves[1].BlackMove.Should().Be("exf4");
+        }
+
+        [Test]
+        public void PgnWithSeveralGamesParsed()
+        {
+
         }
     }
 }
