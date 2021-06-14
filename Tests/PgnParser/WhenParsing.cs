@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using LichessAdvancedStats.Model;
+using System.Collections.Generic;
 
 namespace Tests.PgnParser
 {
@@ -52,7 +54,43 @@ namespace Tests.PgnParser
         [Test]
         public void PgnWithSeveralGamesParsed()
         {
+            var pgn = "[White \"ceretron\"]" +
+                "\n[Black \"Skvorec\"]" +
+                "\n\n1. e4 e5 2. Nf3 Nc6" +
+                "\n\n\n[White \"shakenbake677\"]" +
+                "[Black \"Skvorec\"]" +
+                "1. e4 e5 2. Qh5 Nc6";
+            var expectedFirstGame = new Game
+            {
+                Attributes = new Dictionary<string, string>
+                {
+                    {"White", "ceretron" },
+                    {"Black", "Skvorec" }
+                },
+                Moves = new List<Move>
+                {
+                    new Move("e4", "e5"),
+                    new Move("Nf3", "Nc6")
+                }
+            };
+            var expectedSecondGame = new Game
+            {
+                Attributes = new Dictionary<string, string>
+                {
+                    {"White", "shakenbake677" },
+                    {"Black", "Skvorec" }
+                },
+                Moves = new List<Move>
+                {
+                    new Move("e4", "e5"),
+                    new Move("Qh5", "Nc6")
+                }
+            };
 
+            var games = parser.Parse(pgn);
+
+            games[0].Should().Be(expectedFirstGame);
+            games[1].Should().Be(expectedSecondGame);
         }
     }
 }

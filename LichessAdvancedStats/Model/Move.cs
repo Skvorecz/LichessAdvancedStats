@@ -10,6 +10,17 @@ namespace LichessAdvancedStats.Model
         public string WhiteMove { get; set; }
         public string BlackMove { get; set; }
 
+        public Move()
+        {
+
+        }
+
+        public Move(string whiteMove, string blackMove)
+        {
+            WhiteMove = whiteMove;
+            BlackMove = blackMove;
+        }
+
         
         public override bool Equals(object obj)
         {
