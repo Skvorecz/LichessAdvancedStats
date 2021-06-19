@@ -2,95 +2,115 @@
 using NUnit.Framework;
 using FluentAssertions;
 using System.Collections.Generic;
+using System;
 
 namespace Tests.StatsAgregator
 {
-    [TestFixture]
-    class WhenCalculatingWinrates
-    {
-        LichessAdvancedStats.Domain.StatsAgregator StatsAgregator = new LichessAdvancedStats.Domain.StatsAgregator();
+	[TestFixture]
+	class WhenCalculatingWinrates
+	{
+		LichessAdvancedStats.Domain.StatsAgregator StatsAgregator = new LichessAdvancedStats.Domain.StatsAgregator();
 
-        private Game CreateGame(bool mePlayWhite, string result)
-        {
-            var game = new Game();
-            if (mePlayWhite)
-            {
-                game.Attributes.Add("White", "Me");
-                game.Attributes.Add("Black", "NotMe");
-            }
-            else
-            {
-                game.Attributes.Add("White", "NotMe");
-                game.Attributes.Add("Black", "Me");
-            }
-            game.Attributes.Add("Result", result);
+		private Game CreateGame(bool mePlayWhite, string result)
+		{
+			var game = new Game();
+			if (mePlayWhite)
+			{
+				game.Attributes.Add("White", "Me");
+				game.Attributes.Add("Black", "NotMe");
+			}
+			else
+			{
+				game.Attributes.Add("White", "NotMe");
+				game.Attributes.Add("Black", "Me");
+			}
+			game.Attributes.Add("Result", result);
 
-            return game;
-        }
+			return game;
+		}
 
-        [Test]
-        public void GameWonOnWhiteCounted()
-        {
-            var games = new List<Game>
-            {
-                CreateGame(true, "1-0")
-            };
+		[Test]
+		public void GameWonOnWhiteCounted()
+		{
+			var games = new List<Game>
+			{
+				CreateGame(true, "1-0")
+			};
 
-            var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
 
-            stats[0].Victories.Should().Be(1);
-        }
+			stats[0].Victories.Should().Be(1);
+		}
 
-        [Test]
-        public void GameWonOnBlackCounted()
-        {
-            var games = new List<Game>
-            {
-                CreateGame(false, "0-1")
-            };
+		[Test]
+		public void GameWonOnBlackCounted()
+		{
+			var games = new List<Game>
+			{
+				CreateGame(false, "0-1")
+			};
 
-            var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
 
-            stats[0].Victories.Should().Be(1);
-        }
+			stats[0].Victories.Should().Be(1);
+		}
 
-        [Test]
-        public void GameLostOnWhiteCounted()
-        {
-            var games = new List<Game>
-            {
-                CreateGame(true, "0-1")
-            };
+		[Test]
+		public void GameLostOnWhiteCounted()
+		{
+			var games = new List<Game>
+			{
+				CreateGame(true, "0-1")
+			};
 
-            var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
 
-            stats[0].Defeats.Should().Be(1);
-        }
+			stats[0].Defeats.Should().Be(1);
+		}
 
-        [Test]
-        public void GameLostOnBlackCounted()
-        {
-            var games = new List<Game>
-            {
-                CreateGame(false, "1-0")
-            };
+		[Test]
+		public void GameLostOnBlackCounted()
+		{
+			var games = new List<Game>
+			{
+				CreateGame(false, "1-0")
+			};
 
-            var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
 
-            stats[0].Defeats.Should().Be(1);
-        }
+			stats[0].Defeats.Should().Be(1);
+		}
 
-        [Test]
-        public void DrawCounted([Values]bool result)
-        {
-            var games = new List<Game>
-            {
-                CreateGame(result, "1/2-1/2")
-            };
+		[Test]
+		public void DrawCounted([Values]bool result)
+		{
+			var games = new List<Game>
+			{
+				CreateGame(result, "1/2-1/2")
+			};
 
-            var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = StatsAgregator.CalculateWinratesByMoves(games, "me");
 
-            stats[0].Draws.Should().Be(1);
-        }
-    }
+			stats[0].Draws.Should().Be(1);
+		}
+
+		[Test]
+		public void ExceptionIsThrownWhenPlayerHaventPlayedGameFromList()
+		{
+			var game = new Game
+			{
+				Attributes = new Dictionary<string, string>
+				{
+					{"White", "NotMe" },
+					{"Black", "AlsoNotMe" },
+					{"Result", "Draw" }
+				}
+			};
+			var games = new List<Game> { game };
+
+			StatsAgregator.Invoking(a => a.CalculateWinratesByMoves(games, "me"))
+				.Should()
+				.Throw<Exception>();
+		}
+	}
 }
