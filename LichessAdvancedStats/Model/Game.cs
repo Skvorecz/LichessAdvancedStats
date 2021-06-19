@@ -9,6 +9,25 @@ namespace LichessAdvancedStats.Model
     {
         public Dictionary<string, string> Attributes;
         public List<Move> Moves { get; set; }
+        public GameResult Result
+        {
+            get
+            {
+                var result = Attributes["Result"];
+                if (result == "1-0")
+                {
+                    return GameResult.WhiteVictory;
+                }
+                else if (result == "0-1")
+                {
+                    return GameResult.BlackVictory;
+                }
+                else
+                {
+                    return GameResult.Draw;
+                }                
+            }
+        }
 
         public Game()
         {
@@ -23,21 +42,12 @@ namespace LichessAdvancedStats.Model
                 return false;
             }
 
-            var game = (Game)obj;
+            var game = (Game)obj;           
             
-            if(game.Moves.Count != this.Moves.Count)
+            if(!game.Moves.SequenceEqual(this.Moves))
             {
                 return false;
             }
-
-            for(var i = 0; i < game.Moves.Count; i++)
-            {
-                if(game.Moves[i].Equals(this.Moves[i]) == false)
-                {
-                    return false;
-                }
-            }
-
 
             if(game.Attributes.Count != this.Attributes.Count)
             {
