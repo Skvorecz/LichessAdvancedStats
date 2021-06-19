@@ -10,24 +10,33 @@ namespace LichessAdvancedStats.Domain
     {
         public List<Stats> CalculateWinratesByMoves(List<Game> games, string playerName)
         {
-            var game = games[0];
-            var stats = new Stats();
-            if (game.Result == GameResult.Draw)
+            var statsList = new List<Stats>();
+
+            foreach (var game in games)
             {
-                stats.Draws++;
+                var stats =
+                    statsList.Find(s => s.Moves.SequenceEqual(game.Moves))
+                    ?? new Stats(game.Moves);
+
+                if (game.Result == GameResult.Draw)
+                {
+                    stats.Draws++;
+                }
+
+                if (IsPlayerPlayAsWhite(game, playerName) && game.Result == GameResult.WhiteVictory
+                    || !IsPlayerPlayAsWhite(game, playerName) && game.Result == GameResult.BlackVictory)
+                {
+                    stats.Victories++;
+                }
+                else
+                {
+                    stats.Defeats++;
+                }
+
+                statsList.Add(stats);
             }
 
-            if (IsPlayerPlayAsWhite(game, playerName) && game.Result == GameResult.WhiteVictory
-                || !IsPlayerPlayAsWhite(game, playerName) && game.Result == GameResult.BlackVictory)
-            {
-                stats.Victories++;
-            }
-            else
-            {
-                stats.Defeats++;
-            }
-
-            return new List<Stats> { stats };
+            return statsList;
         }
 
         private bool IsPlayerPlayAsWhite(Game game, string playerName)
