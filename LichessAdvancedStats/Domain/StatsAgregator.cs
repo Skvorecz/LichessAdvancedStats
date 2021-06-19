@@ -32,8 +32,20 @@ namespace LichessAdvancedStats.Domain
 
         private bool IsPlayerPlayAsWhite(Game game, string playerName)
         {
-            var whitePlayerName = game.Attributes["White"];
-            return string.Compare(whitePlayerName, playerName, true) == 0;
+            var whitePlayerName = game.White;
+            var blackPlayerName = game.Black;
+            if (string.Compare(whitePlayerName, playerName, true) == 0)
+            {
+                return true;
+            }
+            else if ((string.Compare(blackPlayerName, playerName, true) == 0))
+            {
+                return false;
+            }
+            else
+            {
+                throw new Exception($"Player {playerName} haven't played this game");
+            }
         }
     }
 }

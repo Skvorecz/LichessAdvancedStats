@@ -25,9 +25,11 @@ namespace LichessAdvancedStats.Model
                 else
                 {
                     return GameResult.Draw;
-                }                
+                }
             }
         }
+        public string White => Attributes["White"];
+        public string Black => Attributes["Black"];
 
         public Game()
         {
