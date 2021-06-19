@@ -8,15 +8,19 @@ namespace LichessAdvancedStats.Domain
 {
     public class StatsAgregator
     {
-        public List<Stats> CalculateWinratesByMoves(List<Game> games, string playerName)
+        public List<Stats> CalculateWinratesByMoves(List<Game> games, string playerName, int numberOfMovesToCompare)
         {
             var statsList = new List<Stats>();
 
             foreach (var game in games)
             {
-                var stats =
-                    statsList.Find(s => s.Moves.SequenceEqual(game.Moves))
-                    ?? new Stats(game.Moves);
+                var firstMoves = game.Moves.Take(numberOfMovesToCompare).ToList();
+                var stats = statsList.Find(s => s.Moves.SequenceEqual(firstMoves));
+                if (stats == null)
+                {
+                    stats = new Stats(firstMoves);
+                    statsList.Add(stats);
+                }
 
                 if (game.Result == GameResult.Draw)
                 {
@@ -32,8 +36,6 @@ namespace LichessAdvancedStats.Domain
                 {
                     stats.Defeats++;
                 }
-
-                statsList.Add(stats);
             }
 
             return statsList;

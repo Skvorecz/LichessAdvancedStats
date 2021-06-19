@@ -40,7 +40,7 @@ namespace Tests.StatsAgregator
 				CreateGame(true, "1-0")
 			};
 
-			var stats = statsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
 
 			stats[0].Victories.Should().Be(1);
 		}
@@ -53,7 +53,7 @@ namespace Tests.StatsAgregator
 				CreateGame(false, "0-1")
 			};
 
-			var stats = statsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
 
 			stats[0].Victories.Should().Be(1);
 		}
@@ -66,7 +66,7 @@ namespace Tests.StatsAgregator
 				CreateGame(true, "0-1")
 			};
 
-			var stats = statsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
 
 			stats[0].Defeats.Should().Be(1);
 		}
@@ -79,7 +79,7 @@ namespace Tests.StatsAgregator
 				CreateGame(false, "1-0")
 			};
 
-			var stats = statsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
 
 			stats[0].Defeats.Should().Be(1);
 		}
@@ -92,7 +92,7 @@ namespace Tests.StatsAgregator
 				CreateGame(result, "1/2-1/2")
 			};
 
-			var stats = statsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
 
 			stats[0].Draws.Should().Be(1);
 		}
@@ -106,8 +106,9 @@ namespace Tests.StatsAgregator
 				CreateGame(true, "0-1", new Move("e4", "e5"))
 			};
 
-			var stats = statsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
 
+			stats.Count.Should().Be(1);
 			stats[0].Victories.Should().Be(1);
 			stats[0].Defeats.Should().Be(1);
 		}
@@ -121,10 +122,25 @@ namespace Tests.StatsAgregator
 				CreateGame(true, "0-1", new Move("d4", "d5"))
 			};
 
-			var stats = statsAgregator.CalculateWinratesByMoves(games, "me");
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
 
 			stats.Find(s => s.Moves.SequenceEqual(new Move[] { new Move("e4", "e5") })).Victories.Should().Be(1);
 			stats.Find(s => s.Moves.SequenceEqual(new Move[] { new Move("d4", "d5") })).Defeats.Should().Be(1);
+		}
+
+		[Test]
+		public void OnlySpecifiedNumberOfFirstMovesCompared()
+        {
+			var games = new List<Game>
+			{
+				CreateGame(true, "1-0", new Move("e4", "e5"), new Move("f4", "exf4")),
+				CreateGame(true, "1-0", new Move("e4", "e5"), new Move("Bc4", "Nf6"))
+			};
+
+			var stats = statsAgregator.CalculateWinratesByMoves(games, "me", 1);
+
+			stats.Count.Should().Be(1);
+			stats[0].Victories.Should().Be(2);
 		}
 
 		[Test]
@@ -141,7 +157,7 @@ namespace Tests.StatsAgregator
 			};
 			var games = new List<Game> { game };
 
-			statsAgregator.Invoking(a => a.CalculateWinratesByMoves(games, "me"))
+			statsAgregator.Invoking(a => a.CalculateWinratesByMoves(games, "me", 1))
 				.Should()
 				.Throw<Exception>();
 		}
