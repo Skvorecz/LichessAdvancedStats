@@ -13,6 +13,7 @@ namespace LichessAdvancedStats.Model
         }
 
         public List<Move> Moves { get; set; }
+        public int TotalGames => Victories + Draws + Defeats;
         public int Victories { get; set; }
         public int Draws { get; set; }
         public int Defeats { get; set; }
