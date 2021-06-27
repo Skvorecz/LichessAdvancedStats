@@ -23,6 +23,18 @@ namespace Tests.PgnParser
         }
 
         [Test]
+        public void AttributeWithNonAlphabeticalSymbolsParsed()
+        {
+            var pgn = "[Result \"1-0\"]" +
+                "\n1. e4 e5 2. f4 exf4";
+
+            var games = parser.Parse(pgn);
+
+            games[0].Attributes["Result"].Should().Be("1-0");
+            games[0].Attributes.Count.Should().Be(1);
+        }
+
+        [Test]
         public void SeveralAttributesParsed()
         {
             var pgn = "[White \"Skvorec\"]" +

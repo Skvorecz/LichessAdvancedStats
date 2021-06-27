@@ -10,7 +10,7 @@ namespace LichessAdvancedStats.Domain
         private const string GamePattern = @"((\[.*\])\s*)+([^/[])+";
         private const string AttributePattern = @"\[[^\[]*\]";
         private const string KeyPattern = @"\w+[^\u0022\s]";
-        private const string ValuePattern = @"\u0022[\w\-\s]+\u0022";
+        private const string ValuePattern = @"\u0022.*\u0022";
 
         public List<Game> Parse(string pgn)
         {
