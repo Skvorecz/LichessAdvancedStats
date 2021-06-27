@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using LichessAdvancedStats.Model;
 using System.Text.RegularExpressions;
 
@@ -9,75 +7,70 @@ namespace LichessAdvancedStats.Domain
 {
     public class PgnParser
     {
-        private const string patternForGame = @"((\[.*\])\s*)+([^/[])+";
-        private const string patternForAttribute = @"\[[^\[]*\]";
+        private const string gamePattern = @"((\[.*\])\s*)+([^/[])+";
+        private const string attributePattern = @"\[[^\[]*\]";
         private const string keyPattern = @"\w+[^\u0022\s]";
         private const string valuePattern = @"\u0022[\w\s]+\u0022";
 
         public List<Game> Parse(string pgn)
         {
-            var gamesResult = new List<Game>();
+            var result = new List<Game>();
 
-            var gameRegex = new Regex(patternForGame, RegexOptions.IgnorePatternWhitespace);
+            var gameRegex = new Regex(gamePattern);
             var games = gameRegex.Matches(pgn);
             foreach (var game in games)
             {
-                var gameDomain = new Game();
-                var attributeRegex = new Regex(patternForAttribute);
-                var attributes = attributeRegex.Matches(game.ToString());
-                foreach (var attribute in attributes)
-                {
-                    var keyRegex = new Regex(keyPattern);
-                    var key = keyRegex.Match(attribute.ToString()).Value;
-
-                    var valueRegex = new Regex(valuePattern);
-                    var value = valueRegex.Match(attribute.ToString()).Value.Replace("\"", "");
-
-                    gameDomain.Attributes.Add(key, value);
-                }
-
-                var movesStartIndex = game.ToString().LastIndexOf(']') + 1;
-                var movesString = game.ToString().Substring(movesStartIndex);
-                var moves = ParseMoves(movesString);
-                gameDomain.Moves = moves;
-
-                gamesResult.Add(gameDomain);
+                result.Add(ParseGame(game.ToString()));
             }
 
-            return gamesResult;
+            return result;
         }
 
         private Game ParseGame(string gameString)
         {
-            var movesIndex = gameString.IndexOf("1.");
-            var game = new Game
+            var attributes = ParseAttributes(gameString);
+            var moves = ParseMoves(gameString);
+
+            return new Game
             {
-                Attributes = ParseAttributes(gameString.Substring(0, movesIndex - 1)),
-                Moves = ParseMoves(gameString.Substring(movesIndex))
+                Attributes = attributes,
+                Moves = moves
             };
-            return game;
         }
 
-        private Dictionary<string, string> ParseAttributes(string attributes)
+        private Dictionary<string, string> ParseAttributes(string gameString)
         {
-            var attributesSplited = attributes.Split('[', ']');
-            var attributesDictionary = new Dictionary<string, string>();
-            foreach (var attribute in attributesSplited)
-            {
-                var splited = attribute.Trim().Split('"');
+            var result = new Dictionary<string, string>();
 
-                if (splited.Length > 1)
-                {
-                    attributesDictionary.Add(splited[0].Trim(),
-                                        splited[1].Trim());
-                }
+            var attributeRegex = new Regex(attributePattern);
+            var attributes = attributeRegex.Matches(gameString.ToString());
+
+            foreach (var attribute in attributes)
+            {
+                ParseSingleAttribute(attribute.ToString(),
+                    out var key,
+                    out var value);
+
+                result.Add(key, value);
             }
 
-            return attributesDictionary;
+            return result;
         }
 
-        private List<Move> ParseMoves(string movesString)
+        private void ParseSingleAttribute(string attribute, out string key, out string value)
         {
+            var keyRegex = new Regex(keyPattern);
+            key = keyRegex.Match(attribute.ToString()).Value;
+
+            var valueRegex = new Regex(valuePattern);
+            value = valueRegex.Match(attribute).Value.Replace("\"", "");
+        }
+
+        private List<Move> ParseMoves(string gameString)
+        {
+            var movesStartIndex = gameString.LastIndexOf(']') + 1;
+            var movesString = gameString.Substring(movesStartIndex);
+
             var movesSplited = movesString.Trim().Split(" ");
             var moves = new List<Move>();   
             
@@ -102,7 +95,5 @@ namespace LichessAdvancedStats.Domain
 
             return moves;
         }
-
-        
     }
 }
