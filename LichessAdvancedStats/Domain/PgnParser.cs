@@ -7,16 +7,16 @@ namespace LichessAdvancedStats.Domain
 {
     public class PgnParser
     {
-        private const string gamePattern = @"((\[.*\])\s*)+([^/[])+";
-        private const string attributePattern = @"\[[^\[]*\]";
-        private const string keyPattern = @"\w+[^\u0022\s]";
-        private const string valuePattern = @"\u0022[\w\s]+\u0022";
+        private const string GamePattern = @"((\[.*\])\s*)+([^/[])+";
+        private const string AttributePattern = @"\[[^\[]*\]";
+        private const string KeyPattern = @"\w+[^\u0022\s]";
+        private const string ValuePattern = @"\u0022[\w\s]+\u0022";
 
         public List<Game> Parse(string pgn)
         {
             var result = new List<Game>();
 
-            var gameRegex = new Regex(gamePattern);
+            var gameRegex = new Regex(GamePattern);
             var games = gameRegex.Matches(pgn);
             foreach (var game in games)
             {
@@ -42,7 +42,7 @@ namespace LichessAdvancedStats.Domain
         {
             var result = new Dictionary<string, string>();
 
-            var attributeRegex = new Regex(attributePattern);
+            var attributeRegex = new Regex(AttributePattern);
             var attributes = attributeRegex.Matches(gameString.ToString());
 
             foreach (var attribute in attributes)
@@ -59,10 +59,10 @@ namespace LichessAdvancedStats.Domain
 
         private void ParseSingleAttribute(string attribute, out string key, out string value)
         {
-            var keyRegex = new Regex(keyPattern);
+            var keyRegex = new Regex(KeyPattern);
             key = keyRegex.Match(attribute.ToString()).Value;
 
-            var valueRegex = new Regex(valuePattern);
+            var valueRegex = new Regex(ValuePattern);
             value = valueRegex.Match(attribute).Value.Replace("\"", "");
         }
 
