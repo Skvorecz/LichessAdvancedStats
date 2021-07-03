@@ -72,7 +72,7 @@ namespace LichessAdvancedStats.Domain
             var movesString = gameString.Substring(movesStartIndex);
 
             var movesSplited = movesString.Trim().Split(" ");
-            var moves = new List<Move>();   
+            var moves = new List<Move>();
             
             for (int i = 0; i < movesSplited.Length; i++)
             {

@@ -1,0 +1,66 @@
+﻿@page "/winrates"
+
+<h3>WinrateByFirstMoves</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Moves</th>
+            <th>Total games</th>
+            <th>Victories</th>
+            <th>Draws</th>
+            <th>Defeats</th>
+            <th>Winrate</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stat in Stats)
+        {
+            <tr>
+                <td>@GetMovesString(stat)</td>
+                <td>@stat.TotalGames</td>
+                <td>@stat.Victories</td>
+                <td>@stat.Draws</td>
+                <td>@stat.Defeats</td>
+                <td>@($"{(float)stat.Victories / (float)stat.TotalGames * 100}%")</td>
+                <td>@stat.Draws</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@using Domain;
+@using Model;
+@using System.Text;
+@code {
+    LichessApiWorker LichessApiWorker { get; set; }
+    PgnParser PgnParser { get; set; }
+    StatsAgregator StatsAgregator { get; set; }
+
+    List<Stats> Stats { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Stats = new List<Stats>();
+        LichessApiWorker = new LichessApiWorker();
+        PgnParser = new PgnParser();
+        StatsAgregator = new StatsAgregator();
+
+        var playerName = "Skvorec";
+        var pgn = await LichessApiWorker.LoadUsersGamesPgnAsync(playerName);
+        var games = PgnParser.Parse(pgn);
+        Stats = StatsAgregator.CalculateWinratesByMoves(games, playerName, 2)
+            .OrderByDescending(s=>s.TotalGames)
+            .ToList();
+    }
+
+    private string GetMovesString(Stats stats)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (var i = 0; i<stats.Moves.Count; i++)
+        {
+            sb.Append($"{i+1} {stats.Moves[i].WhiteMove} {stats.Moves[i].BlackMove} ");
+        }
+        return sb.ToString();
+    }
+}
